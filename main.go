@@ -14,6 +14,8 @@ const (
 	_Facebook = "https://www.facebook.com"
 	_IconPath = "assets/icon.ico"
 
+	_VSCode = "Code.exe"
+
 	_HotKeyCtrlAlt   = "Ctrl+Alt+F"
 	_HotKeyCtrlShift = "Ctrl+Shift+F"
 	_HotKeyShiftAlt  = "Shift+Alt+F"
@@ -42,6 +44,10 @@ func main() {
 	}
 
 	go watchConfig()
+
+	if config.VSCodeRedirection != 0 {
+		go doMonitor(_VSCode)
+	}
 
 	systray.Run(run, func() {})
 }
