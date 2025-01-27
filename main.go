@@ -14,7 +14,11 @@ const (
 	_Facebook = "https://www.facebook.com"
 	_IconPath = "assets/icon.ico"
 
-	_VSCode = "Code.exe"
+	_VSCode    = "Code.exe"
+	_Goland    = "goland64.exe"
+	_PyCharm   = "pycharm64.exe"
+	_WebStorm  = "webstorm64.exe"
+	_RustRover = "rustrover64.exe"
 
 	_HotKeyCtrlAlt   = "Ctrl+Alt+F"
 	_HotKeyCtrlShift = "Ctrl+Shift+F"
@@ -45,8 +49,26 @@ func main() {
 
 	go watchConfig()
 
+	ides := []string{}
+
 	if config.VSCodeRedirection != 0 {
-		go doMonitor(_VSCode)
+		ides = append(ides, _VSCode)
+	}
+	if config.GolandRedirection != 0 {
+		ides = append(ides, _Goland)
+	}
+	if config.PyCharmRedirection != 0 {
+		ides = append(ides, _PyCharm)
+	}
+	if config.WebStormRedirection != 0 {
+		ides = append(ides, _WebStorm)
+	}
+	if config.RustRoverRedirection != 0 {
+		ides = append(ides, _RustRover)
+	}
+
+	if len(ides) != 0 {
+		go doMonitor(ides)
 	}
 
 	systray.Run(run, func() {})

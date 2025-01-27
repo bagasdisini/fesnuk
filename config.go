@@ -10,8 +10,12 @@ import (
 )
 
 type Config struct {
-	HotKey            string
-	VSCodeRedirection int
+	HotKey               string
+	VSCodeRedirection    int
+	GolandRedirection    int
+	PyCharmRedirection   int
+	WebStormRedirection  int
+	RustRoverRedirection int
 }
 
 var config *Config
@@ -23,6 +27,10 @@ func loadConfig() (*Config, error) {
 			cfg = ini.Empty()
 			cfg.Section("Settings").Key("HotKey").SetValue(_HotKeyCtrlAlt)
 			cfg.Section("Settings").Key("VSCodeRedirection").SetValue("0")
+			cfg.Section("Settings").Key("GolandRedirection").SetValue("0")
+			cfg.Section("Settings").Key("PyCharmRedirection").SetValue("0")
+			cfg.Section("Settings").Key("WebStormRedirection").SetValue("0")
+			cfg.Section("Settings").Key("RustRoverRedirection").SetValue("0")
 			if err := cfg.SaveTo(_ConfigFile); err != nil {
 				return nil, fmt.Errorf("failed to create config file: %v", err)
 			}
@@ -32,8 +40,12 @@ func loadConfig() (*Config, error) {
 	}
 
 	configDoc := &Config{
-		HotKey:            cfg.Section("Settings").Key("HotKey").String(),
-		VSCodeRedirection: cfg.Section("Settings").Key("VSCodeRedirection").MustInt(0),
+		HotKey:               cfg.Section("Settings").Key("HotKey").String(),
+		VSCodeRedirection:    cfg.Section("Settings").Key("VSCodeRedirection").MustInt(0),
+		GolandRedirection:    cfg.Section("Settings").Key("GolandRedirection").MustInt(0),
+		PyCharmRedirection:   cfg.Section("Settings").Key("PyCharmRedirection").MustInt(0),
+		WebStormRedirection:  cfg.Section("Settings").Key("WebStormRedirection").MustInt(0),
+		RustRoverRedirection: cfg.Section("Settings").Key("RustRoverRedirection").MustInt(0),
 	}
 	return configDoc, nil
 }
@@ -42,6 +54,10 @@ func saveConfig() {
 	cfg := ini.Empty()
 	cfg.Section("Settings").Key("HotKey").SetValue(config.HotKey)
 	cfg.Section("Settings").Key("VSCodeRedirection").SetValue(fmt.Sprintf("%d", config.VSCodeRedirection))
+	cfg.Section("Settings").Key("GolandRedirection").SetValue(fmt.Sprintf("%d", config.GolandRedirection))
+	cfg.Section("Settings").Key("PyCharmRedirection").SetValue(fmt.Sprintf("%d", config.PyCharmRedirection))
+	cfg.Section("Settings").Key("WebStormRedirection").SetValue(fmt.Sprintf("%d", config.WebStormRedirection))
+	cfg.Section("Settings").Key("RustRoverRedirection").SetValue(fmt.Sprintf("%d", config.RustRoverRedirection))
 	_ = cfg.SaveTo(_ConfigFile)
 	return
 }

@@ -44,11 +44,17 @@ func setupSystray() {
 	systray.SetTooltip("Mending scroll fesnuk ygy")
 
 	go func() {
-		subMenuVsCode := systray.AddMenuItemCheckbox("Aku malas", "Aku malas", config.VSCodeRedirection == 1)
-		subMenuTop := systray.AddMenuItem("Hotkey", "Change hotkey")
-		subMenuCtrlAlt := subMenuTop.AddSubMenuItemCheckbox(_HotKeyCtrlAlt, _HotKeyCtrlAlt, config.HotKey == _HotKeyCtrlAlt)
-		subMenuCtrlShift := subMenuTop.AddSubMenuItemCheckbox(_HotKeyCtrlShift, _HotKeyCtrlShift, config.HotKey == _HotKeyCtrlShift)
-		subMenuShiftAlt := subMenuTop.AddSubMenuItemCheckbox(_HotKeyShiftAlt, _HotKeyShiftAlt, config.HotKey == _HotKeyShiftAlt)
+		menuIde := systray.AddMenuItem("Aku malas", "Aku malas")
+		subMenuVsCode := menuIde.AddSubMenuItemCheckbox("VS Code", "VS Code", config.VSCodeRedirection == 1)
+		subMenuGoland := menuIde.AddSubMenuItemCheckbox("Goland", "Goland", config.GolandRedirection == 1)
+		subMenuPyCharm := menuIde.AddSubMenuItemCheckbox("PyCharm", "PyCharm", config.PyCharmRedirection == 1)
+		subMenuWebStorm := menuIde.AddSubMenuItemCheckbox("WebStorm", "WebStorm", config.WebStormRedirection == 1)
+		subMenuRustRover := menuIde.AddSubMenuItemCheckbox("Rust Rover", "Rust Rover", config.RustRoverRedirection == 1)
+
+		menuHotkey := systray.AddMenuItem("Hotkey", "Change hotkey")
+		subMenuCtrlAlt := menuHotkey.AddSubMenuItemCheckbox(_HotKeyCtrlAlt, _HotKeyCtrlAlt, config.HotKey == _HotKeyCtrlAlt)
+		subMenuCtrlShift := menuHotkey.AddSubMenuItemCheckbox(_HotKeyCtrlShift, _HotKeyCtrlShift, config.HotKey == _HotKeyCtrlShift)
+		subMenuShiftAlt := menuHotkey.AddSubMenuItemCheckbox(_HotKeyShiftAlt, _HotKeyShiftAlt, config.HotKey == _HotKeyShiftAlt)
 
 		systray.AddSeparator()
 
@@ -63,6 +69,46 @@ func setupSystray() {
 				} else {
 					subMenuVsCode.Check()
 					config.VSCodeRedirection = 1
+				}
+				saveConfig()
+
+			case <-subMenuGoland.ClickedCh:
+				if subMenuGoland.Checked() {
+					subMenuGoland.Uncheck()
+					config.GolandRedirection = 0
+				} else {
+					subMenuGoland.Check()
+					config.GolandRedirection = 1
+				}
+				saveConfig()
+
+			case <-subMenuPyCharm.ClickedCh:
+				if subMenuPyCharm.Checked() {
+					subMenuPyCharm.Uncheck()
+					config.PyCharmRedirection = 0
+				} else {
+					subMenuPyCharm.Check()
+					config.PyCharmRedirection = 1
+				}
+				saveConfig()
+
+			case <-subMenuWebStorm.ClickedCh:
+				if subMenuWebStorm.Checked() {
+					subMenuWebStorm.Uncheck()
+					config.WebStormRedirection = 0
+				} else {
+					subMenuWebStorm.Check()
+					config.WebStormRedirection = 1
+				}
+				saveConfig()
+
+			case <-subMenuRustRover.ClickedCh:
+				if subMenuRustRover.Checked() {
+					subMenuRustRover.Uncheck()
+					config.RustRoverRedirection = 0
+				} else {
+					subMenuRustRover.Check()
+					config.RustRoverRedirection = 1
 				}
 				saveConfig()
 

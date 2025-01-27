@@ -11,7 +11,7 @@ import (
 var browserMutex sync.Mutex
 var appActive = false
 
-func doMonitor(targetApp string) {
+func doMonitor(targetApp []string) {
 	for {
 		isAppRunning := false
 		processes, err := process.Processes()
@@ -25,9 +25,11 @@ func doMonitor(targetApp string) {
 				continue
 			}
 
-			if name == targetApp {
-				isAppRunning = true
-				handleTargetApp(proc)
+			for _, app := range targetApp {
+				if name == app {
+					isAppRunning = true
+					handleTargetApp(proc)
+				}
 			}
 		}
 
