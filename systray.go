@@ -9,36 +9,46 @@ import (
 	"unsafe"
 )
 
-func run() {
-	user32 := syscall.MustLoadDLL("user32")
-	defer user32.Release()
+type msg struct {
+	HWND   uintptr
+	UINT   uintptr
+	WPARAM int16
+	LPARAM int64
+	DWORD  int32
+	POINT  struct{ X, Y int64 }
+}
 
-	setupSystray(user32)
-	updateHotkeys(config.HotKey)
+func run() {
+	defer func(user32 *syscall.DLL) {
+		_ = user32.Release()
+	}(user32)
+
+	setupSystray()
+	updateHotkeys()
 	registerHotkeys(user32)
 
 	getMsg := user32.MustFindProc("GetMessageW")
 	for {
-		var msg = &MSG{}
-		getMsg.Call(uintptr(unsafe.Pointer(msg)), 0, 0, 0, 1)
+		var msg = &msg{}
+		_, _, _ = getMsg.Call(uintptr(unsafe.Pointer(msg)), 0, 0, 0, 1)
 
 		if id := msg.WPARAM; id != 0 {
-			browser.OpenURL("https://www.facebook.com")
+			_ = browser.OpenURL(_Facebook)
 		}
 	}
 }
 
-func setupSystray(user32 *syscall.DLL) {
-	systray.SetIcon(getIcon("assets/icon.ico"))
+func setupSystray() {
+	systray.SetIcon(getIcon(_IconPath))
 	systray.SetTitle("Fesnuk")
-	systray.SetTooltip("CTRL+ALT+F to open Facebook")
+	systray.SetTooltip("Mending scroll fesnuk ygy")
 
 	go func() {
-		subMenuVsCode := systray.AddMenuItemCheckbox("Malas ngoding", "Malas ngoding", config.VSCodeRedirection == 1)
+		subMenuVsCode := systray.AddMenuItemCheckbox("Aku malas", "Aku malas", config.VSCodeRedirection == 1)
 		subMenuTop := systray.AddMenuItem("Hotkey", "Change hotkey")
-		subMenuCtrlAlt := subMenuTop.AddSubMenuItemCheckbox("Ctrl+Alt+F", "Ctrl+Alt+F", config.HotKey == "Ctrl+Alt+F")
-		subMenuCtrlShift := subMenuTop.AddSubMenuItemCheckbox("Ctrl+Shift+F", "Ctrl+Shift+F", config.HotKey == "Ctrl+Shift+F")
-		subMenuShiftAlt := subMenuTop.AddSubMenuItemCheckbox("Shift+Alt+F", "Shift+Alt+F", config.HotKey == "Shift+Alt+F")
+		subMenuCtrlAlt := subMenuTop.AddSubMenuItemCheckbox(_HotKeyCtrlAlt, _HotKeyCtrlAlt, config.HotKey == _HotKeyCtrlAlt)
+		subMenuCtrlShift := subMenuTop.AddSubMenuItemCheckbox(_HotKeyCtrlShift, _HotKeyCtrlShift, config.HotKey == _HotKeyCtrlShift)
+		subMenuShiftAlt := subMenuTop.AddSubMenuItemCheckbox(_HotKeyShiftAlt, _HotKeyShiftAlt, config.HotKey == _HotKeyShiftAlt)
 
 		systray.AddSeparator()
 
@@ -54,28 +64,28 @@ func setupSystray(user32 *syscall.DLL) {
 					subMenuVsCode.Check()
 					config.VSCodeRedirection = 1
 				}
-				saveConfig("config.ini")
+				saveConfig()
 
 			case <-subMenuCtrlAlt.ClickedCh:
 				subMenuCtrlAlt.Check()
 				subMenuCtrlShift.Uncheck()
 				subMenuShiftAlt.Uncheck()
-				config.HotKey = "Ctrl+Alt+F"
-				saveConfig("config.ini")
+				config.HotKey = _HotKeyCtrlAlt
+				saveConfig()
 
 			case <-subMenuCtrlShift.ClickedCh:
 				subMenuCtrlAlt.Uncheck()
 				subMenuCtrlShift.Check()
 				subMenuShiftAlt.Uncheck()
-				config.HotKey = "Ctrl+Shift+F"
-				saveConfig("config.ini")
+				config.HotKey = _HotKeyCtrlShift
+				saveConfig()
 
 			case <-subMenuShiftAlt.ClickedCh:
 				subMenuCtrlAlt.Uncheck()
 				subMenuCtrlShift.Uncheck()
 				subMenuShiftAlt.Check()
-				config.HotKey = "Shift+Alt+F"
-				saveConfig("config.ini")
+				config.HotKey = _HotKeyShiftAlt
+				saveConfig()
 
 			case <-mQuitOrig.ClickedCh:
 				systray.Quit()
@@ -90,7 +100,9 @@ func getIcon(filePath string) []byte {
 	if err != nil {
 		return nil
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
 	content, err := io.ReadAll(file)
 	if err != nil {

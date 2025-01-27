@@ -4,17 +4,24 @@ import (
 	"errors"
 	"github.com/getlantern/systray"
 	"golang.org/x/sys/windows"
-	"log"
+	"syscall"
 )
 
-type MSG struct {
-	HWND   uintptr
-	UINT   uintptr
-	WPARAM int16
-	LPARAM int64
-	DWORD  int32
-	POINT  struct{ X, Y int64 }
-}
+const (
+	_ConfigFile = "config.ini"
+	_UserDLL    = "user32"
+
+	_Facebook = "https://www.facebook.com"
+	_IconPath = "assets/icon.ico"
+
+	_HotKeyCtrlAlt   = "Ctrl+Alt+F"
+	_HotKeyCtrlShift = "Ctrl+Shift+F"
+	_HotKeyShiftAlt  = "Shift+Alt+F"
+)
+
+var (
+	user32 = syscall.MustLoadDLL(_UserDLL)
+)
 
 func main() {
 	mutexName := "FesnukAppMutex"
@@ -25,12 +32,16 @@ func main() {
 		}
 		return
 	}
-	defer windows.CloseHandle(mutex)
+	defer func(handle windows.Handle) {
+		_ = windows.CloseHandle(handle)
+	}(mutex)
 
-	config, err = loadConfig("config.ini")
+	config, err = loadConfig()
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
 		return
 	}
+
+	go watchConfig()
+
 	systray.Run(run, func() {})
 }
