@@ -6,8 +6,8 @@ Fesnuk adalah aplikasi didedikasikan untuk para kalian yang lebih suka scrolling
 Dengan Fesnuk, kalian bisa scrolling fesbuk dengan lebih cepat.
 
 ## Instalasi
-1. Download file installer pada release page.
-2. Jalankan file installer.
+1. Clone repo ini.
+2. Jalankan file `fesnuk.exe`.
 
 ## Penggunaan
 1. Buka aplikasi Fesnuk.
@@ -28,8 +28,8 @@ Untuk IDE yang support:
 - `Rust Rover`
 
 ## TODO
+- [X] GUI configuration
 - [ ] Custom hotkey
 - [ ] Support IDE lain
 - [ ] Auto start saat windows boot
 - [ ] Support OS lain
-- [ ] GUI configuration

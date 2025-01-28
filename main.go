@@ -2,31 +2,11 @@ package main
 
 import (
 	"errors"
+	"fesnuk/internal/config"
+	"fesnuk/internal/monitor"
+	_systray "fesnuk/internal/systray"
 	"github.com/getlantern/systray"
 	"golang.org/x/sys/windows"
-	"syscall"
-)
-
-const (
-	_ConfigFile = "config.ini"
-	_UserDLL    = "user32"
-
-	_Facebook = "https://www.facebook.com"
-	_IconPath = "assets/icon.ico"
-
-	_VSCode    = "Code.exe"
-	_Goland    = "goland64.exe"
-	_PyCharm   = "pycharm64.exe"
-	_WebStorm  = "webstorm64.exe"
-	_RustRover = "rustrover64.exe"
-
-	_HotKeyCtrlAlt   = "Ctrl+Alt+F"
-	_HotKeyCtrlShift = "Ctrl+Shift+F"
-	_HotKeyShiftAlt  = "Shift+Alt+F"
-)
-
-var (
-	user32 = syscall.MustLoadDLL(_UserDLL)
 )
 
 func main() {
@@ -42,34 +22,34 @@ func main() {
 		_ = windows.CloseHandle(handle)
 	}(mutex)
 
-	config, err = loadConfig()
+	config.Config, err = config.LoadConfig()
 	if err != nil {
 		return
 	}
 
-	go watchConfig()
+	go config.WatchConfig()
 
 	ides := []string{}
 
-	if config.VSCodeRedirection != 0 {
-		ides = append(ides, _VSCode)
+	if config.Config.VSCodeRedirection != 0 {
+		ides = append(ides, config.VSCode)
 	}
-	if config.GolandRedirection != 0 {
-		ides = append(ides, _Goland)
+	if config.Config.GolandRedirection != 0 {
+		ides = append(ides, config.Goland)
 	}
-	if config.PyCharmRedirection != 0 {
-		ides = append(ides, _PyCharm)
+	if config.Config.PyCharmRedirection != 0 {
+		ides = append(ides, config.PyCharm)
 	}
-	if config.WebStormRedirection != 0 {
-		ides = append(ides, _WebStorm)
+	if config.Config.WebStormRedirection != 0 {
+		ides = append(ides, config.WebStorm)
 	}
-	if config.RustRoverRedirection != 0 {
-		ides = append(ides, _RustRover)
+	if config.Config.RustRoverRedirection != 0 {
+		ides = append(ides, config.RustRover)
 	}
 
 	if len(ides) != 0 {
-		go doMonitor(ides)
+		go monitor.DoMonitor(ides)
 	}
 
-	systray.Run(run, func() {})
+	systray.Run(_systray.Run, func() {})
 }
