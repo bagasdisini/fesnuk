@@ -14,6 +14,13 @@ const (
 	_ModWin
 )
 
+var SupportedKeys = []string{
+	"1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
+	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+	"K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+	"U", "V", "W", "X", "Y", "Z",
+}
+
 type hotKey struct {
 	ID        int
 	Modifiers int
@@ -72,4 +79,21 @@ func parseHotkey() (modifiers int, keyCode int, err error) {
 		return 0, 0, fmt.Errorf("no key code found in hotkey: %s", config.Config.HotKey)
 	}
 	return modifiers, keyCode, nil
+}
+
+func GetSupportedKeys() string {
+	keys := strings.ReplaceAll(config.Config.HotKey, "+", "")
+	keys = strings.ReplaceAll(keys, "Ctrl", "")
+	keys = strings.ReplaceAll(keys, "Alt", "")
+	keys = strings.ReplaceAll(keys, "Shift", "")
+	return keys
+}
+
+func BuildHotkey(keyCode string, modifiers []string) string {
+	hotkey := ""
+	for _, modifier := range modifiers {
+		hotkey += modifier + "+"
+	}
+	hotkey += keyCode
+	return hotkey
 }

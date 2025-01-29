@@ -63,6 +63,7 @@ func setupSystray() {
 		subMenuCtrlAlt := menuHotkey.AddSubMenuItemCheckbox(config.HotKeyCtrlAlt, config.HotKeyCtrlAlt, config.Config.HotKey == config.HotKeyCtrlAlt)
 		subMenuCtrlShift := menuHotkey.AddSubMenuItemCheckbox(config.HotKeyCtrlShift, config.HotKeyCtrlShift, config.Config.HotKey == config.HotKeyCtrlShift)
 		subMenuShiftAlt := menuHotkey.AddSubMenuItemCheckbox(config.HotKeyShiftAlt, config.HotKeyShiftAlt, config.Config.HotKey == config.HotKeyShiftAlt)
+		subMenuCustom := menuHotkey.AddSubMenuItemCheckbox("(Custom)", "Custom hotkey", config.Config.HotKey != config.HotKeyCtrlAlt && config.Config.HotKey != config.HotKeyCtrlShift && config.Config.HotKey != config.HotKeyShiftAlt)
 
 		systray.AddSeparator()
 
@@ -143,6 +144,9 @@ func setupSystray() {
 				subMenuShiftAlt.Check()
 				config.Config.HotKey = config.HotKeyShiftAlt
 				config.SaveConfig()
+
+			case <-subMenuCustom.ClickedCh:
+				openGui()
 
 			case <-mQuitOrig.ClickedCh:
 				systray.Quit()

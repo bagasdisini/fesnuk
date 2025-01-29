@@ -3,11 +3,13 @@ package main
 import (
 	"fesnuk/assets"
 	"fesnuk/internal/config"
+	"fesnuk/internal/hotkey"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
+	"strings"
 )
 
 func main() {
@@ -22,11 +24,29 @@ func main() {
 	myWindow := myApp.NewWindow("Fesnuk")
 	myWindow.SetIcon(assets.ResourceIconIco)
 
-	dropdownOptions := []string{config.HotKeyCtrlAlt, config.HotKeyCtrlShift, config.HotKeyShiftAlt}
-	selectedOption := widget.NewSelect(dropdownOptions, func(value string) {})
-	selectedOption.PlaceHolder = "Select hotkey"
+	shiftCb := widget.NewCheck("Shift", func(checked bool) {})
+	ctrlCb := widget.NewCheck("Ctrl", func(checked bool) {})
+	winCb := widget.NewCheck("Win", func(checked bool) {})
+	altCb := widget.NewCheck("Alt", func(checked bool) {})
+	keyCb := widget.NewSelect(hotkey.SupportedKeys, func(value string) {})
 
-	selectedOption.Selected = config.Config.HotKey
+	keyCb.PlaceHolder = " "
+
+	hotKeyGrid := container.NewGridWithColumns(5, shiftCb, ctrlCb, winCb, altCb, keyCb)
+
+	if strings.Contains(config.Config.HotKey, "Ctrl") {
+		ctrlCb.Checked = true
+	}
+	if strings.Contains(config.Config.HotKey, "Shift") {
+		shiftCb.Checked = true
+	}
+	if strings.Contains(config.Config.HotKey, "Win") {
+		winCb.Checked = true
+	}
+	if strings.Contains(config.Config.HotKey, "Alt") {
+		altCb.Checked = true
+	}
+	keyCb.Selected = hotkey.GetSupportedKeys()
 
 	vsCodeCb := widget.NewCheck("VSCode", func(checked bool) {})
 	golandCb := widget.NewCheck("Goland", func(checked bool) {})
@@ -34,7 +54,7 @@ func main() {
 	webStormCb := widget.NewCheck("WebStorm", func(checked bool) {})
 	rustRoverCb := widget.NewCheck("RustRover", func(checked bool) {})
 
-	checkboxGrid := container.NewGridWithColumns(2, vsCodeCb, golandCb, pyCharmCb, webStormCb, rustRoverCb)
+	ideGrid := container.NewGridWithColumns(2, vsCodeCb, golandCb, pyCharmCb, webStormCb, rustRoverCb)
 
 	if config.Config.VSCodeRedirection != 0 {
 		vsCodeCb.Checked = true
@@ -53,7 +73,21 @@ func main() {
 	}
 
 	saveButton := widget.NewButton("Save", func() {
-		config.Config.HotKey = selectedOption.Selected
+		modifiers := []string{}
+		if ctrlCb.Checked {
+			modifiers = append(modifiers, "Ctrl")
+		}
+		if shiftCb.Checked {
+			modifiers = append(modifiers, "Shift")
+		}
+		if winCb.Checked {
+			modifiers = append(modifiers, "Win")
+		}
+		if altCb.Checked {
+			modifiers = append(modifiers, "Alt")
+		}
+
+		config.Config.HotKey = hotkey.BuildHotkey(keyCb.Selected, modifiers)
 
 		config.Config.VSCodeRedirection = boolToInt(vsCodeCb.Checked)
 		config.Config.GolandRedirection = boolToInt(golandCb.Checked)
@@ -68,9 +102,9 @@ func main() {
 
 	content := container.NewVBox(
 		widget.NewLabel("Select hotkey:"),
-		selectedOption,
+		hotKeyGrid,
 		widget.NewLabel("Aku malas:"),
-		checkboxGrid,
+		ideGrid,
 		saveButton,
 	)
 

@@ -29,7 +29,7 @@ Untuk IDE yang support:
 
 ## TODO
 - [X] GUI configuration
-- [ ] Custom hotkey
+- [X] Custom hotkey
 - [ ] Support IDE lain
 - [ ] Auto start saat windows boot
 - [ ] Support OS lain
