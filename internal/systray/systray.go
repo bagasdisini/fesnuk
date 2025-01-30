@@ -72,7 +72,7 @@ func setupSystray() {
 		for {
 			select {
 			case <-mGuiOrig.ClickedCh:
-				openGui()
+				OpenGui()
 
 			case <-subMenuVsCode.ClickedCh:
 				if subMenuVsCode.Checked() {
@@ -146,7 +146,7 @@ func setupSystray() {
 				config.SaveConfig()
 
 			case <-subMenuCustom.ClickedCh:
-				openGui()
+				OpenGui()
 
 			case <-mQuitOrig.ClickedCh:
 				systray.Quit()
@@ -156,7 +156,7 @@ func setupSystray() {
 	}()
 }
 
-func openGui() {
+func OpenGui() {
 	exePath, err := os.Executable()
 	if err != nil {
 		return

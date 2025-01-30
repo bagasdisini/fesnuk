@@ -10,15 +10,13 @@ Dengan Fesnuk, kalian bisa scrolling fesbuk dengan lebih cepat.
 2. Jalankan file `fesnuk.exe`.
 
 ## Penggunaan
-1. Buka aplikasi Fesnuk.
-2. Aplikasi akan otomatis berjalan di background. Bisa dilihat di system tray.
-3. Jalankan sesuai hotkey yang sudah ditentukan.
-4. Jika fitur `Aku malas` aktif, kalian akan diarahkan ke fesbuk ketika aplikasi IDE dijalakan, dan IDE akan otomatis close.
+1. Buka `fesnuk.exe`.
+2. GUI untuk configurasi akan otomatis terbuka. Dan service app akan otomatis berjalan di background, bisa dilihat di system tray.
+3. Meskipun GUI sudah ditutup, service app akan tetap berjalan di background.
+4. Jalankan sesuai hotkey yang sudah ditentukan.
+5. Jika fitur `Aku malas` aktif, kalian akan diarahkan ke fesbuk ketika aplikasi IDE dijalakan, dan IDE akan otomatis close.
 
-Untuk sekarang, hotkey yang support masih:
-- `Ctrl + Alt + F`
-- `Ctrl + Shift + F`
-- `Shift + Alt + F`
+Custom hotkey bisa diatur di GUI configurasi.
 
 Untuk IDE yang support:
 - `Visual Studio Code`

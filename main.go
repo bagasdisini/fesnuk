@@ -51,5 +51,6 @@ func main() {
 		go monitor.DoMonitor(ides)
 	}
 
+	go _systray.OpenGui()
 	systray.Run(_systray.Run, func() {})
 }
